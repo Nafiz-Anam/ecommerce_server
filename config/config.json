@@ -1,0 +1,23 @@
+{
+    "development": {
+        "username": "u575513417_q_cash",
+        "password": "Nafiz@1122",
+        "database": "u575513417_q_cash",
+        "host": "srv909.hstgr.io",
+        "table_prefix": "qc_"
+    },
+    "test": {
+        "username": "u575513417_q_cash",
+        "password": "Nafiz@1122",
+        "database": "u575513417_q_cash",
+        "host": "srv909.hstgr.io",
+        "table_prefix": "qc_"
+    },
+    "production": {
+        "username": "u575513417_q_cash",
+        "password": "Nafiz@1122",
+        "database": "u575513417_q_cash",
+        "host": "srv909.hstgr.io",
+        "table_prefix": "qc_"
+    }
+}
