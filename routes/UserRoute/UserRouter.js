@@ -6,9 +6,12 @@ const applyUploader = require("../../uploads/applyUploder");
 const UserController = require("../../controller/userController");
 const checkAdminToken = require("../../utilities/tokenmanager/checkAdminToken");
 
+router.post("/register", authController.register);
+router.post("/login", authController.login);
+
+
 router.post("/send_otp", authValidator.check_user, authController.send_otp);
-router.post("/verify_otp", authValidator.otp_verify, authController.otp_verify);
-router.post("/login", authValidator.login, authController.login);
+// router.post("/verify_otp", authValidator.otp_verify, authController.otp_verify);
 router.post(
     "/details/add",
     checkUserToken,

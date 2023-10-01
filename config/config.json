@@ -1,10 +1,10 @@
 {
     "development": {
-        "username": "u575513417_q_cash",
+        "username": "u575513417_ecom",
         "password": "Nafiz@1122",
-        "database": "u575513417_q_cash",
+        "database": "u575513417_ecom",
         "host": "srv909.hstgr.io",
-        "table_prefix": "qc_"
+        "table_prefix": "ec_"
     },
     "test": {
         "username": "u575513417_q_cash",

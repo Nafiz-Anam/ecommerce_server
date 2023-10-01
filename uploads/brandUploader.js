@@ -3,7 +3,7 @@ const path = require("path");
 
 const fileStorage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, "public/product");
+        cb(null, "public/brand");
     },
 
     filename: (req, file, cb) => {
@@ -37,7 +37,7 @@ const fileFilter = (req, file, cb) => {
     }
 };
 
-let productUploader = multer({
+let brandUploader = multer({
     storage: fileStorage,
     limits: { fileSize: "5mb" },
     fileFilter: fileFilter,
@@ -46,10 +46,6 @@ let productUploader = multer({
         name: "image",
         maxCount: 1,
     },
-    {
-        name: "gallery",
-        maxCount: 4,
-    },
 ]);
 
-module.exports = productUploader;
+module.exports = brandUploader;

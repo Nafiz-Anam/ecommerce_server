@@ -124,9 +124,9 @@ var helpers = {
                     .limit(1)
                     .get(config.table_prefix + "users");
                 break;
-            case "PKG":
+            case "PRD":
                 response = await qb
-                    .select("package_no")
+                    .select("product_no")
                     .order_by("id", "desc")
                     .limit(1)
                     .get(config.table_prefix + "products");
@@ -147,8 +147,8 @@ var helpers = {
         if(response[0]?.user_no){
             numberPart = parseInt(response[0].user_no.match(/\d+/)[0])+1;
         }
-        if (response[0]?.package_no) {
-            numberPart = parseInt(response[0].package_no.match(/\d+/)[0]) + 1;
+        if (response[0]?.product_no) {
+            numberPart = parseInt(response[0].product_no.match(/\d+/)[0]) + 1;
         }
         if (response[0]?.agent_no) {
             numberPart = parseInt(response[0].agent_no.match(/\d+/)[0]) + 1;

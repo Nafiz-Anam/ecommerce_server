@@ -3,6 +3,7 @@ const env = process.env.ENVIRONMENT;
 const config = require("../config/config.json")[env];
 const pool = require("../config/database");
 const dbtable = config.table_prefix + "products";
+const dbtable2 = config.table_prefix + "brands";
 const helpers = require("../utilities/helper/general_helper");
 
 var dbModel = {
@@ -10,6 +11,13 @@ var dbModel = {
         console.log("data => ", data);
         let qb = await pool.get_connection();
         let response = await qb.returning("id").insert(dbtable, data);
+        qb.release();
+        return response;
+    },
+    brand_add: async (data) => {
+        console.log("data => ", data);
+        let qb = await pool.get_connection();
+        let response = await qb.returning("id").insert(dbtable2, data);
         qb.release();
         return response;
     },
@@ -42,6 +50,20 @@ var dbModel = {
             .limit(limit.perpage)
             .offset(limit.start)
             .get(dbtable);
+        console.log("query => ", qb.last_query());
+        qb.release();
+        return response;
+    },
+
+    select_brand_list: async (condition, limit) => {
+        let qb = await pool.get_connection();
+        let response = await qb
+            .select("*")
+            .where(condition)
+            .order_by("id", "desc")
+            .limit(limit.perpage)
+            .offset(limit.start)
+            .get(dbtable2);
         console.log("query => ", qb.last_query());
         qb.release();
         return response;

@@ -74,69 +74,38 @@ var AuthController = {
         }
     },
 
-    otp_verify: async (req, res) => {
+    register: async (req, res) => {
         try {
-            let selection = "id,mobile_code,mobile_no,sms_id";
-            let condition = {
-                otp: req.bodyString("otp"),
-                token: req.bodyString("otp_token"),
+            let user_no = await helpers.make_sequential_no("QC");
+            console.log("user_no", user_no);
+            let password = req.bodyString("password");
+            let hashPassword = await enc_dec.encrypt(password);
+            userData = {
+                type: "customer",
+                name: req.bodyString("name"),
+                email: req.bodyString("email"),
+                password: hashPassword,
+                user_no: `QC${user_no}`,
             };
-            CustomerModel.selectMobileOtpDAta(selection, condition)
+            await UserModel.add(userData)
                 .then(async (result) => {
-                    if (result) {
-                        let user_no = await helpers.make_sequential_no("QC");
-                        console.log("user_no", user_no);
-
-                        let password = req.bodyString("password");
-                        let hashPassword = await enc_dec.encrypt(password);
-                        userData = {
-                            type: "user",
-                            mobile_code: result.mobile_code,
-                            mobile_no: result.mobile_no,
-                            password: hashPassword,
-                            user_no: `QC${user_no}`,
-                        };
-                        await UserModel.add(userData)
-                            .then(async (result) => {
-                                // jwt token
-                                let payload = {
-                                    id: result.insert_id,
-                                    type: "user",
-                                };
-                                const token = accessToken(payload);
-
-                                // delete OTP entry from table
-                                await helpers.delete_common_entry(
-                                    condition,
-                                    "mobile_otp"
-                                );
-
-                                res.status(200).json({
-                                    status: true,
-                                    token: token,
-                                    message:
-                                        "OTP verified. User created successfully!",
-                                });
-                            })
-                            .catch((err) => {
-                                console.log(err);
-                                res.status(500).json({
-                                    status: false,
-                                    message: "Internal server error!",
-                                });
-                            });
-                    } else {
-                        res.status(500).json({
-                            status: false,
-                            message: "Wrong OTP, Try again!",
-                        });
-                    }
+                    // jwt token
+                    let payload = {
+                        id: result.insert_id,
+                        type: "customer",
+                    };
+                    const token = accessToken(payload);
+                    res.status(200).json({
+                        status: true,
+                        token: token,
+                        message: "Customer registered successfully.",
+                    });
                 })
-                .catch((error) => {
-                    console.log(error);
+                .catch((err) => {
+                    console.log(err);
                     res.status(500).json({
                         status: false,
-                        message: "Internal server error!",
+                        message: "Error registering customer. Try again!",
                     });
                 });
         } catch (error) {
@@ -151,16 +120,13 @@ var AuthController = {
     login: async (req, res) => {
         try {
             let foundUser = await UserModel.select({
-                mobile_code: req.bodyString("mobile_code"),
-                mobile_no: req.bodyString("mobile_no"),
+                email: req.bodyString("email"),
             });
-
             if (foundUser.length > 0) {
                 let user_status = await UserModel.select({
                     id: foundUser[0].id,
                     status: 0,
                 });
-
                 if (user_status.length > 0) {
                     let submittedPass = req.bodyString("password");
                     let plainPassword = enc_dec.decrypt(foundUser[0].password);
