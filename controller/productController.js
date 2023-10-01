@@ -81,6 +81,39 @@ var ProductController = {
         }
     },
 
+    categoryBrand: async (req, res) => {
+        try {
+            console.log("req.all_files", req.all_files);
+            let category_data = {
+                image: static_url + "category/" + req.all_files?.image,
+                icon: static_url + "category/" + req.all_files?.icon,
+                name: req.bodyString("name"),
+                slug: req.bodyString("slug"),
+                product_count: 0,
+            };
+            await ProductModel.ctg_add(category_data)
+                .then((result) => {
+                    res.status(200).json({
+                        status: true,
+                        message: "Category created successfully!",
+                    });
+                })
+                .catch((error) => {
+                    console.log(error);
+                    res.status(500).json({
+                        status: false,
+                        message: "Category creation failed.",
+                    });
+                });
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({
+                status: false,
+                message: "Internal server error!",
+            });
+        }
+    },
+
     update: async (req, res) => {
         try {
             let id = enc_dec.decrypt(req.bodyString("product_id"));
@@ -207,6 +240,51 @@ var ProductController = {
             console.log(totalCount);
 
             ProductModel.select_brand_list(condition, limit)
+                .then(async (result) => {
+                    res.status(200).json({
+                        status: true,
+                        data: result,
+                        message: "Brand fetched successfully!",
+                        total: totalCount,
+                    });
+                })
+                .catch((err) => {
+                    console.log(err);
+                    res.status(500).json({
+                        status: false,
+                        data: {},
+                        error: "Server side error!",
+                    });
+                });
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({
+                status: false,
+                data: {},
+                error: "Server side error!",
+            });
+        }
+    },
+    ctg_list: async (req, res) => {
+        try {
+            let limit = {
+                perpage: 10,
+                start: 0,
+            };
+            if (req.bodyString("perpage") && req.bodyString("page")) {
+                perpage = parseInt(req.bodyString("perpage"));
+                start = parseInt(req.bodyString("page"));
+                limit.perpage = perpage;
+                limit.start = (start - 1) * perpage;
+            }
+            let condition = {
+                status: 0,
+            };
+
+            const totalCount = await ProductModel.get_count(condition);
+            console.log(totalCount);
+
+            ProductModel.select_ctg_list(condition, limit)
                 .then(async (result) => {
                     res.status(200).json({
                         status: true,

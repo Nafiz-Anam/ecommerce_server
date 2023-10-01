@@ -4,6 +4,7 @@ const config = require("../config/config.json")[env];
 const pool = require("../config/database");
 const dbtable = config.table_prefix + "products";
 const dbtable2 = config.table_prefix + "brands";
+const dbtable3 = config.table_prefix + "categories";
 const helpers = require("../utilities/helper/general_helper");
 
 var dbModel = {
@@ -18,6 +19,13 @@ var dbModel = {
         console.log("data => ", data);
         let qb = await pool.get_connection();
         let response = await qb.returning("id").insert(dbtable2, data);
+        qb.release();
+        return response;
+    },
+    ctg_add: async (data) => {
+        console.log("data => ", data);
+        let qb = await pool.get_connection();
+        let response = await qb.returning("id").insert(dbtable3, data);
         qb.release();
         return response;
     },
@@ -64,6 +72,19 @@ var dbModel = {
             .limit(limit.perpage)
             .offset(limit.start)
             .get(dbtable2);
+        console.log("query => ", qb.last_query());
+        qb.release();
+        return response;
+    },
+    select_ctg_list: async (condition, limit) => {
+        let qb = await pool.get_connection();
+        let response = await qb
+            .select("*")
+            .where(condition)
+            .order_by("id", "desc")
+            .limit(limit.perpage)
+            .offset(limit.start)
+            .get(dbtable3);
         console.log("query => ", qb.last_query());
         qb.release();
         return response;

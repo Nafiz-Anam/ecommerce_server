@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const ProductController = require("../../controller/productController");
 const brandUploader = require("../../uploads/brandUploader");
+const categoryUploader = require("../../uploads/categoryUploader");
 const productUploader = require("../../uploads/productUploader");
 const checkAdminToken = require("../../utilities/tokenmanager/checkAdminToken");
 const checkPermission = require("../../utilities/tokenmanager/checkpermission");
@@ -12,8 +13,14 @@ router.post(
     ProductController.create
 );
 router.post("/brand/create", brandUploader, ProductController.createBrand);
+router.post(
+    "/category/create",
+    categoryUploader,
+    ProductController.categoryBrand
+);
 router.post("/list", ProductController.list);
 router.post("/brand/list", ProductController.brand_list);
+router.post("/category/list", ProductController.ctg_list);
 router.post("/details", checkPermission, ProductController.details);
 router.post(
     "/update",
